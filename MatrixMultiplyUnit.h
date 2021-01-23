@@ -5,7 +5,7 @@
 #include <vector>
 #include "UnifiedBuffer.h"
 
-#define MATRIX_SIZE 256
+#define MATRIX_SIZE 4
 #define ACCUMULATOR_SIZE 4096
 
 #define IN_PROGRESS 0
@@ -16,41 +16,28 @@
 #define MULTIPLY 1
 #define PROPAGATE 2
 
-class ProcessElement {
-private:
-	__int8 weight; // weight stationary
-	__int32 partial_sum;
 
-public:
-	bool use;
-	__int8 input; // temporary storage to save the input
-	ProcessElement(int _weight);
-	__int32 multiply();
-	/*__int8 getInput();
-	__int32 getPartialSum();*/
-
-};
-
-//new class
 class Cell {
 public:
 	Cell(__int8 _weight);
 	
-	//bool use;
-
-	//__int8 phase;
-	__int8 tmp_in;
-	__int16 input;
-	__int32 tmp_psum;
-
-	__int8 weight;
-	
 	__int32 partial_sum;
+	__int8 input;
+	__int8 weight;
+	__int8 tmp_in;
+	__int32 tmp_psum;
+	
 
-	Cell* rightCell;
-	Cell* downCell;
+	//Cell* rightCell;
+	//Cell* downCell;
 
-	void interconnect(Cell* R_Cell, Cell* D_Cell);
+	//the value will be passed with the pointer variable below! Cell pointer variable is obsolete!
+	//Cell이 아닌 __int32를 쓰는 이유는, Cell로 해두면 accumulator랑 연결할 때 상당히 곤혹스러워져서 그냥 general 하게 __int32로 뒀다.
+	__int8* rightval;
+	__int32* downval;
+
+	//void interconnect(Cell* R_Cell, Cell* D_Cell);
+	void interconnect(__int8* rval, __int32* dval);
 	void mac();
 	void propagate();
 

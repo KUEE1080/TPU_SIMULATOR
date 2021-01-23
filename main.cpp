@@ -44,9 +44,19 @@ int main(void) {
 	while (MMU_run() == IN_PROGRESS) {
 		cycle++;
 	}
-	//int d = mmu_accumulator[0];
+	int d = Accumulator[0][0];
 	Activation_run(ReLU);
 	int d1 = activation_node[0];
 
 	return 0;
+}
+
+void MatrixMultiply() { // a code to verify if the systolic array is giving the correct values
+	//matrix multiplication should be dependent on the MATRIX_SIZE
+
+}
+
+bool compare(int _input_size) {
+	//반복문 돌리면서 싹다 값들 비교한다. 만약 하나라도 다르면 return false, 다 일치하면 return true
+	return true;
 }
