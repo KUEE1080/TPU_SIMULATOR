@@ -4,17 +4,14 @@
 #include <time.h>
 #include <vector>
 #include "UnifiedBuffer.h"
+#include "WeightFIFO.h"
+#include "Analysis.h"
 
-#define MATRIX_SIZE 4
+#define MATRIX_SIZE 256
 #define ACCUMULATOR_SIZE 4096
 
 #define IN_PROGRESS 0
 #define COMPLETE 1
-
-#define IDLE -1
-#define INPUT_LOAD 0
-#define MULTIPLY 1
-#define PROPAGATE 2
 
 
 class Cell {

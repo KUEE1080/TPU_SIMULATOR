@@ -30,6 +30,12 @@
     <ClCompile Include="Control.cpp">
       <Filter>리소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Analysis.cpp">
+      <Filter>리소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="WeightFIFO.cpp">
+      <Filter>리소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MatrixMultiplyUnit.h">
@@ -42,6 +48,12 @@
       <Filter>리소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="Control.h">
+      <Filter>리소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Analysis.h">
+      <Filter>리소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="WeightFIFO.h">
       <Filter>리소스 파일</Filter>
     </ClInclude>
   </ItemGroup>

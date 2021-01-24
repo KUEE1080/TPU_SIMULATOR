@@ -125,16 +125,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Activation.cpp" />
+    <ClCompile Include="Analysis.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="MatrixMultiplyUnit.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UnifiedBuffer.cpp" />
+    <ClCompile Include="WeightFIFO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Activation.h" />
+    <ClInclude Include="Analysis.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="MatrixMultiplyUnit.h" />
     <ClInclude Include="UnifiedBuffer.h" />
+    <ClInclude Include="WeightFIFO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
