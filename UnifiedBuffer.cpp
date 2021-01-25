@@ -1,7 +1,7 @@
 // Assuming the unified buffer is ideal. So the code structure does not consider the hardware constraints
 #include "UnifiedBuffer.h"
 
-std::vector<__int8> node_input;
+std::vector<int8_t> node_input;
 
 void SystolicDataSetup(int mode, int input_length) { // B x 256
 	srand(time(0));

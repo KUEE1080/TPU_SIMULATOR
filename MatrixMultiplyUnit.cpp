@@ -1,22 +1,21 @@
 #include "MatrixMultiplyUnit.h"
 
 std::vector<Cell> Cells;
-__int8 InputBuffer[MATRIX_SIZE][MATRIX_SIZE * 2];
-__int32 Accumulator[ACCUMULATOR_SIZE][MATRIX_SIZE];
+int8_t InputBuffer[MATRIX_SIZE][MATRIX_SIZE * 2];
+int32_t Accumulator[ACCUMULATOR_SIZE][MATRIX_SIZE];
 
 //Control logic
-__int32 buffer_accumulator[MATRIX_SIZE] = { 0, }; // MMU¿¡¼­ Accumulator·Î ³Ñ¾î°¡±â Àü¿¡ Àá±ñ ´ë±âÇÏ´Â °ªµé
-int accumulator_index[ACCUMULATOR_SIZE] = { 0, }; //Bx256ÀÏ¶§ °¢ entry¾È¿¡ ÀÖ´Â 256°³ÀÇ 32bit ÀúÀå À§Ä¡¸¦ Æ®·¡Å·ÇÏ±â À§ÇÑ ÀÎµ¦½º ÀúÀå¼Ò
+int32_t buffer_accumulator[MATRIX_SIZE] = { 0, }; // MMUï¿½ï¿½ï¿½ï¿½ Accumulatorï¿½ï¿½ ï¿½Ñ¾î°¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+int accumulator_index[ACCUMULATOR_SIZE] = { 0, }; //Bx256ï¿½Ï¶ï¿½ ï¿½ï¿½ entryï¿½È¿ï¿½ ï¿½Ö´ï¿½ 256ï¿½ï¿½ï¿½ï¿½ 32bit ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ Æ®ï¿½ï¿½Å·ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 int ibuf_index = 0; // index bit to implement the InputBuffer to be like a queue
 int input_matrix_col = -1;
 int count_idle_cell = 0;
 
 
-Cell::Cell(__int8 _weight) :
+Cell::Cell(int8_t _weight) :
 	weight(_weight), input(0), partial_sum(0), tmp_in(0), tmp_psum(0), rightval(NULL), downval(NULL) {};
 
 void Cell::mac() { // this operation is done in one cycle
-	//ÀÏ´Ü weightÀº preloadµÇ¾îÀÖ°í inputÀº ´Ù Àü´Ş¹Ş¾Ò¾î¾ßÇÑ´Ù.
 	if (this->input == 0) { count_idle_cell++; } // used for simulation analysis
 	this->partial_sum += (this->input) * (this->weight);
 }
@@ -40,7 +39,7 @@ void Cell::propagate() {
 	}
 }
 
-void Cell::interconnect(__int8* rval, __int32* dval) {
+void Cell::interconnect(int8_t* rval, int32_t* dval) {
 	this->rightval = rval;
 	this->downval = dval;
 }
@@ -53,8 +52,6 @@ void MMU_initialize(int mode, int input_size) {
 	input_matrix_col = input_size;
 	
 	srand(time(0));
-
-	//[ÁÖÀÇ»çÇ×] node_inputÀÇ »çÀÌÁî´Â Bx256ÀÌ´Ù. 256Àº ¹«Á¶°Ç °íÁ¤ÀÌ´Ù
 
 	//Step1: input buffer initialization
 	for (int i = 0; i < MATRIX_SIZE; i++) { for (int j = 0; j < MATRIX_SIZE * 2; j++) { InputBuffer[i][j] = 0; } }
@@ -74,7 +71,7 @@ void MMU_initialize(int mode, int input_size) {
 	for (int i = 0; i < MATRIX_SIZE - 1; i++) {
 		for (int j = 0; j < MATRIX_SIZE - 1; j++) {
 			Cells[i * MATRIX_SIZE + j].interconnect(&Cells[i * MATRIX_SIZE + (j + 1)].tmp_in, &Cells[(i + 1) * MATRIX_SIZE + j].tmp_psum);
-			// (__int16* rval, __int32* dval)
+			// (__int16* rval, int32_t* dval)
 		}
 	}
 
@@ -101,7 +98,6 @@ void MMU_initialize(int mode, int input_size) {
 
 int MMU_run() { // operation matrix multiply unit done in ONE CYCLE
 	if (ibuf_index >= MATRIX_SIZE * 2) { // preventing overflow
-		//MMU¾È¿¡ partial sumÇÏ°í inputÀÌ 0À¸·Î °¨ÁöµÇ´Â °æ¿ì => literally doing nothing ÇÒ °æ¿ì, return COMPLETE ÇÏ±â!!!
 		if (count_idle_cell == MATRIX_SIZE * MATRIX_SIZE) { return COMPLETE; }
 		
 	}
@@ -115,14 +111,11 @@ int MMU_run() { // operation matrix multiply unit done in ONE CYCLE
 	
 	int dd = Cells[0].input;
 
-	//[°³¹ß »çÇ×] MMUº¸´Ù Å« Çà·ÄÀÏ °æ¿ì, ÀÌ°É ¾îÄ³ÇÒÁö´Â »ı°¢À» ÇØºÁ¾ßÇÑ´Ù.
-
 	//new code
 	count_idle_cell = 0; // resetting the variable for the new cycle
 	for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++) { Cells[i].mac(); }
 	for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++) { Cells[i].propagate(); }
 
-	//Á¤È®È÷ ¸»ÇÏ¸é Àú 4096¸¦ ¾î¶² ¹æ½ÄÀ¸·Î allocateÇØÁà¾ßÇÏ´Â°¡??? ³í¹®¿¡¼­´Â ¸í·É¾î¿¡ µû¸¥´Ù°í Çß´Âµ¥... ÀÏ´Ü ¸í·É¾î°¡ ¾îÄ³ »ı°Ü¸Ô¾ú´ÂÁö¸¦ ¸ğ¸¥´Ù.
 	for (int i = 0; i < MATRIX_SIZE; i++) {
 		if (buffer_accumulator[i] != 0) {
 			Accumulator[i][accumulator_index[i]] = buffer_accumulator[i];
